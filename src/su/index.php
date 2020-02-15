@@ -1,5 +1,7 @@
 <?php
     
+    include(__DIR__."/../func.php");
+
     header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none'");
     header("Strict-Transport-Security: max-age=63072000");
     header("X-Frame-Options: DENY");
@@ -11,7 +13,7 @@
     if(isset($_GET['action']) && $_GET['action']==="delete" && 
         isset($_GET['alias']) && is_string($_GET['alias']))
     {
-        $alias = trim(preg_replace('/[\/]/', '', $_GET['alias']));
+        $alias = cleanAlias($_GET['alias']);
         $filename = __DIR__."/links/link-".$alias.".json";
         if(is_file($filename))
         {
@@ -22,8 +24,8 @@
     // Create a new alias
     if(isset($_POST['alias']) && isset($_POST['target']))
     {
-        $alias = preg_replace('/[\/]/', '', $_POST['alias']);
-        $target = $_POST['target'];
+        $alias = cleanAlias($_POST['alias']);
+        $target = cleanUrl($_POST['target']);
         
         if(!empty($alias) && !empty($target))
         {
@@ -115,11 +117,11 @@
                         <tbody>
                             <?php foreach($huepflinks as $huepflink): ?>
                                 <tr>
-                                    <td><a href="/<?php echo $huepflink['alias']; ?>" target="_blank"><?php echo $huepflink['alias']; ?></a></td>
-                                    <td><?php echo $huepflink['target']; ?></td>
-                                    <td><?php echo $huepflink['hits']; ?></td>
-                                    <td><?php echo $huepflink['last_access_date']; ?></td>
-                                    <td>[<a href="?action=delete&amp;alias=<?php echo $huepflink['alias']; ?>">delete</a>]</td>
+                                    <td><a href="/<?php echo urlencode($huepflink['alias']); ?>" target="_blank"><?php echo htmlentities($huepflink['alias'], ENT_COMPAT); ?></a></td>
+                                    <td><?php echo htmlentities($huepflink['target'], ENT_COMPAT); ?></td>
+                                    <td><?php echo htmlentities($huepflink['hits'], ENT_COMPAT); ?></td>
+                                    <td><?php echo htmlentities($huepflink['last_access_date'], ENT_COMPAT); ?></td>
+                                    <td>[<a href="?action=delete&amp;alias=<?php echo urlencode($huepflink['alias']); ?>">delete</a>]</td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
