@@ -1,5 +1,7 @@
 <?php
     
+	include(__DIR__."/func.php");
+
     header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none'");
     header("Strict-Transport-Security: max-age=63072000");
     header("X-Frame-Options: DENY");
@@ -15,14 +17,14 @@
         !empty($_GET['alias']) && is_string($_GET['alias']))
     {
         $mode = "formredir";
-        $alias = trim($_GET['alias']);
+        $alias = cleanAlias($_GET['alias']);
     }
     // Get alias from POST Parameter (remove referer)
     elseif($_SERVER['REQUEST_METHOD']==="POST" && isset($_POST['alias']) && 
         !empty($_POST['alias']) && is_string($_POST['alias']))
     {
         $mode = "jsredir";
-        $alias = trim($_POST['alias']);
+        $alias = cleanAlias($_POST['alias']);
     }
     
     // get data from json file
@@ -35,7 +37,7 @@
             $alias = mb_substr($alias, 0, 50);
         }
         
-        $filename = __DIR__."/su/links/link-".preg_replace('/[\/]/', "", $alias).".json";
+        $filename = __DIR__."/su/links/link-".$alias.".json";
         if(is_file($filename))
         {
             $huepflink = json_decode(file_get_contents($filename), true);
@@ -60,17 +62,9 @@
             $huepflink['hits']++;
             file_put_contents($filename, json_encode($huepflink));
         }
-        
-        $search = array(
-            "&", '"',
-        );
-
-        $replace = array(
-            "&amp;", "\\\"",
-        );
     
-        $targethref = str_replace($search, $replace, $huepflink['target']);
-        $target = str_replace("&", "&amp", $huepflink['target']);
+        $targethref = cleanUrl($huepflink['target']);
+        $target = $huepflink['target'];
     }
     // Alias not found
     else
@@ -122,7 +116,7 @@
                     <?php elseif($mode==="jsredir"): ?>
                         <p style="text-align:center;">
                             Du wirst in wenigen Augenblicken zu folgender Website weitergeleitet:<br>
-                            <a href="<?php echo $targethref; ?>" class="targetlink" rel="external nofollow noreferrer noopener"><?php echo $target; ?></a>
+                            <a href="<?php echo $targethref; ?>" class="targetlink" rel="external nofollow noreferrer noopener"><?php echo htmlentities($target, ENT_COMPAT); ?></a>
                         </p>
                         
                         <div class="alert alert-info" role="alert">
