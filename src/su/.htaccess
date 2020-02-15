@@ -1,0 +1,4 @@
+Authtype Basic
+AuthName "Put whatever you want here"
+AuthUserFile /path/to/this/directory/su/.htpasswd
+Require valid-user
