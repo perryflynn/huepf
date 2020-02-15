@@ -4,6 +4,12 @@ Code of the shortlink service https://hüpf.net.
 
 A file-based shortlink service with an very basic admin panel.
 
+## Features
+
+- File Based
+- Very Basic Admin Panel in `src/su/`
+- Removes referer before redirect
+
 ## Installation
 
 - Put contents of `src/` on your server
