@@ -1,16 +1,16 @@
-
-if($('.targetlink').length>0)
+if(document.querySelector('.targetlink'))
 {
     // redirect to alias target
     var redir = function()
     {
-        $('.targetlink')[0].click();
+        document.querySelector('.targetlink').click();
     };
+
     window.setTimeout(redir, 3000);
 }
-else if($('.formredir').length>0)
+else if(document.querySelector('.formredir'))
 {
     // submit form for referer removal
-    $('.formredirclick').attr('disabled', 'disabled');
-    $('.formredir')[0].submit();
+    document.querySelector('.formredircontainer').classList.add('hidden');
+    document.querySelector('.formredir').submit();
 }
